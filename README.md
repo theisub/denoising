@@ -1,3 +1,3 @@
 # Denoising
 
-![plot](./denoising/imgs/losses.png)
+![plot](./denoising/imgs/losses.PNG)
