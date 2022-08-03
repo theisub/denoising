@@ -119,3 +119,4 @@ if (args.plot_losses):
     plt.xlabel(('Epoch. Best epoch',best_epoch_info['best_epoch_num']))
     plt.ylabel('MSE')
     plt.legend()
+    plt.show()
