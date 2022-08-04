@@ -6,6 +6,7 @@ from matplotlib import pyplot as plt
 import os
 import argparse
 
+# обратный паддинг, чтобы вернуть данные в исходную размерность
 def unpad_and_save_to_np(torch_data,filenames,paddings,out_directory):
     pred_np = torch_data.cpu().numpy()
     for i,item in enumerate(pred_np):
@@ -36,6 +37,9 @@ args = parser.parse_args()
 
 
 dev = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+
+
+# параметры для инференса, берутся из аргументов коммадной строки или же выставляются по умолчанию
 
 batch_size =  args.batch_size if args.batch_size is not None else 256
 inference_path = args.inference_path if args.inference_path is not None else "./val/val/"

@@ -5,7 +5,6 @@ from torch.utils.data import DataLoader,BatchSampler,SequentialSampler
 from matplotlib import pyplot as plt
 import os
 import torch.nn as nn
-import tqdm
 import argparse
 
 parser = argparse.ArgumentParser(description='Args for training')
@@ -38,6 +37,9 @@ print('Train path ',args.train_path)
 print('Val_path ',args.val_path)
 print('Plot losses: ', args.plot_losses)
 
+
+
+# Создание
 model= GRU(80, 16, 80,bidirectional=True,num_directions=2)
 model.to(dev)
 
@@ -49,18 +51,21 @@ optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)
 loss_func = nn.MSELoss()
 
 
+# параметры для обучения, берутся из аргументов коммадной строки или же выставляются по умолчанию
 max_epochs = args.number_of_epochs if args.number_of_epochs is not None else 20
 batch_size = args.batch_size if args.batch_size is not None else 256
 train_path = args.train_path if args.train_path is not None else "./train/train/"
 val_path = args.val_path if args.val_path is not None else "./val/val/"
 
 
+# инициализация всех необходимых структур для данных
 dataset = MyDataSet(train_path)
 dataset_val = MyDataSet(val_path)
 train_loader = DataLoader(dataset, sampler=BatchSampler(SequentialSampler(dataset),batch_size=batch_size,drop_last=True),collate_fn=pad_collate)
 valid_loader = DataLoader(dataset_val, sampler=BatchSampler(SequentialSampler(dataset_val),batch_size=batch_size,drop_last=True),collate_fn=pad_collate)
 
 
+# структуры для хранения информации об эпохах
 training_loss_plot = []
 valid_loss_plot = []
 best_epoch_info = {'best_training_loss':float('inf'),'best_validation_loss':float('inf'),'best_epoch_num':None}
@@ -105,6 +110,7 @@ for epoch in range(max_epochs):
     epoch_ctr+=1
     print(f'Epoch {epoch_ctr}: Train loss {epoch_train_loss} ; Valid loss {epoch_valid_loss}')
 
+    # сохранение текущей и лучшей модели
     if epoch_train_loss < best_epoch_info['best_training_loss'] and epoch_valid_loss < best_epoch_info['best_validation_loss']:
         best_epoch_info['best_training_loss'] = epoch_train_loss
         best_epoch_info['best_validation_loss'] = epoch_valid_loss
@@ -113,6 +119,8 @@ for epoch in range(max_epochs):
         
     torch.save(model,'last.pt')
 
+
+# опциональный вывод графика изменения MSE по эпохам
 if (args.plot_losses):
     plt.plot(training_loss_plot,label='Training loss, MSE')
     plt.plot(valid_loss_plot,label='Validation loss, MSE')

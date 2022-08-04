@@ -10,7 +10,11 @@ def npy_loader(path):
     return sample
 
 
+
+
 class MyDataSet(torch.utils.data.Dataset):
+
+    # в датасете два основных объекта, хранящих отдельно зашумленные и чистые данные
   def __init__(self, path):
     super(MyDataSet, self).__init__()
 
@@ -58,6 +62,7 @@ class GRU(nn.Module):
         pred = self.act(self.linear(pred))
         return pred
 
+# функция для паддинга данных в батче, используется при инициализации DataLoader объектов как аргумент collate_fn
 def pad_collate(batch):
   (data1, data2) = zip(*batch)
   data1_lengths = [len(x) for x in data1[0]]
